@@ -24,3 +24,23 @@ resource "aws_security_group" "ecs_ecurity_group" {
         Name = "${var.ecs_cluster_name}-SG"
     }
 }
+
+resource "aws_security_group" "ecs_alb_security_group" {
+    name = "${var.ecs_cluster_name}-ALB-SG"
+    vpc_id = data.terraform_remote_state.infra.outputs.vpc_id
+    description = "Security GRoup do ECS para nosso ALB"
+
+    ingress {
+        from_port   = 443
+        to_port     = 443
+        protocol    = "TCP"
+        cidr_blocks = [var.internet_cidr_blocks]
+    }
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = [var.internet_cidr_blocks]
+    }
+}
